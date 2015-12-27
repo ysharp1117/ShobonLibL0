@@ -1,0 +1,30 @@
+#デバイスドライバの指定
+DEVICE_DRIVER_SRC_DIR = $(LIB_PATH)/DeviceDriver
+DEVICE_DRIVER_OUT = ./out
+
+#######################
+#Includeフォルダの追加#
+#######################
+INCLUDE_DIRS+=$(addprefix -I,$(DEVICE_DRIVER_SRC_DIR)) -I $(BOARD_DEF_PATH)
+
+######################
+#デバイスドライバ関係#
+######################
+DEVICE_DRIVER_SRCS = $(wildcard $(DEVICE_DRIVER_SRC_DIR)/*.c) $(wildcard $(DEVICE_DRIVER_SRC_DIR)/*.cpp)
+DEVICE_DRIVER_OBJS = \
+$(filter %.o,$(notdir $(DEVICE_DRIVER_SRCS:%.c=%.o)))\
+$(filter %.o,$(notdir $(DEVICE_DRIVER_SRCS:%.cpp=%.o)))
+DEVICE_DRIVER_OBJS := $(addprefix $(DEVICE_DRIVER_OUT)/$(subst ../,,$(DEVICE_DRIVER_SRC_DIR))/,$(DEVICE_DRIVER_OBJS))
+
+OBJS+=$(DEVICE_DRIVER_OBJS)
+
+#デバイスドライバのコンパイル
+$(addprefix $(DEVICE_DRIVER_OUT)/,$(subst ../,,$(DEVICE_DRIVER_SRC_DIR)))/%.o:$(DEVICE_DRIVER_SRC_DIR)/%.c
+	@mkdir $(subst /,\,$(dir $@)) 2> NUL || echo off
+	$(CC) $(CFLAGS) $< -o $@
+	@$(ECHO)
+
+$(addprefix $(DEVICE_DRIVER_OUT)/,$(subst ../,,$(DEVICE_DRIVER_SRC_DIR)))/%.o:$(DEVICE_DRIVER_SRC_DIR)/%.cpp
+	@mkdir $(subst /,\,$(dir $@)) 2> NUL || echo off
+	$(CC) $(CFLAGS) $< -o $@
+	@$(ECHO)

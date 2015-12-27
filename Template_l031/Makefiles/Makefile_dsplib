@@ -1,0 +1,32 @@
+#DSPライブラリの指定
+DSP_LIB_SRC_DIR = $(CMSIS_DIR)/DSP_Lib/Source
+DSP_LIB = libarm_cortexM0l_math.a
+
+######################
+#共通ライブラリに登録#
+######################
+COMMON_LIBS+=$(COMMON_LIB_DIR)/$(DSP_LIB)
+#COMMON_LIB_SRCS+=$(DSP_LIB_SRCS)#gccへの引数が長すぎてmake dependに失敗するのでコメントアウト
+
+###################
+#DSPライブラリ関係#
+###################
+DSP_LIB_SRCS = $(wildcard $(DSP_LIB_SRC_DIR)/*/*.c)
+DSP_LIB_OBJS = $(subst ../,,$(DSP_LIB_SRCS:%.c=%.o))
+
+#DSPライブラリの作成
+$(COMMON_LIB_DIR)/$(DSP_LIB): $(addprefix $(COMMON_LIB_DIR)/,$(DSP_LIB_OBJS))
+	@mkdir $(subst /,\,$(dir $@)) 2> NUL || echo off
+	@$(ECHO) ARM DSP Library Generated at $(COMMON_LIB_DIR)/$(DSP_LIB)
+	@$(AR) scr $@ $^
+	@$(RANLIB) $@
+	@$(ECHO)
+
+#DSPライブラリ内部のコンパイル
+$(addprefix $(COMMON_LIB_DIR)/,$(subst ../,,$(DSP_LIB_SRC_DIR)))/%.o:$(DSP_LIB_SRC_DIR)/%.c
+	@mkdir $(subst /,\,$(dir $@)) 2> NUL || echo off
+	$(CC) $(CFLAGS) $< -o $@
+	@$(ECHO)
+
+#DSP Libの静的リンクライブラリがない場合はこれを呼び出して作る(make allのときに呼び出さないのは一回一回のmake時間短縮のため)
+dsplib: $(COMMON_LIB_DIR)/$(DSP_LIB)

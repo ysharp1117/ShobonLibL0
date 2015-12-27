@@ -1,0 +1,40 @@
+#HALライブラリの指定
+HAL_LIB_SRC_DIR = $(LIB_PATH)/Drivers/STM32L0xx_HAL_Driver/Src
+HAL_LIB_INCLUDE_DIRS = $(LIB_PATH)/Drivers/STM32L0xx_HAL_Driver/Inc
+HAL_LIB = libstm32l0_hal.a
+
+######################
+#共通ライブラリに登録#
+######################
+COMMON_LIBS+=$(COMMON_LIB_DIR)/$(HAL_LIB)
+COMMON_LIB_SRCS+=$(HAL_LIB_SRCS)
+
+#######################
+#Includeフォルダの追加#
+#######################
+INCLUDE_DIRS+=$(addprefix -I,$(HAL_LIB_INCLUDE_DIRS))
+
+###################
+#HALライブラリ関係#
+###################
+HAL_LIB_SRCS = $(wildcard $(HAL_LIB_SRC_DIR)/*.c)
+HAL_LIB_SRCS := $(filter-out $(wildcard $(HAL_LIB_SRC_DIR)/stm32l0xx_hal_msp_template.c), $(HAL_LIB_SRCS))#コンパイル除外対象の設定
+
+HAL_LIB_OBJS = $(subst ../,,$(HAL_LIB_SRCS:%.c=%.o))
+
+#HALライブラリの作成
+$(COMMON_LIB_DIR)/$(HAL_LIB): $(addprefix $(COMMON_LIB_DIR)/,$(HAL_LIB_OBJS))
+	@mkdir $(subst /,\,$(dir $@)) 2> NUL || echo off
+	@$(ECHO) ST HAL Library Generated at $(COMMON_LIB_DIR)/$(HAL_LIB)
+	@$(AR) scr $@ $^
+	@$(RANLIB) $@
+	@$(ECHO)
+
+#HALライブラリ内部のコンパイル
+$(addprefix $(COMMON_LIB_DIR)/,$(subst ../,,$(HAL_LIB_SRC_DIR)))/%.o:$(HAL_LIB_SRC_DIR)/%.c
+	@mkdir $(subst /,\,$(dir $@)) 2> NUL || echo off
+	$(CC) $(CFLAGS) $< -o $@
+	@$(ECHO)
+
+#HAL Libの静的リンクライブラリがない場合はこれを呼び出して作る(make allのときに呼び出さないのは一回一回のmake時間短縮のため)
+hallib: $(COMMON_LIB_DIR)/$(HAL_LIB)

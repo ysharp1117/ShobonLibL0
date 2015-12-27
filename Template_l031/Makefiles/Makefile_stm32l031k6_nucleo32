@@ -1,0 +1,39 @@
+#STM32L031K6_NUCLEO32ライブラリの指定
+STM32L031K6_NUCLEO32_LIB_SRC_DIR = $(LIB_PATH)/Drivers/BSP/STM32L0xx_Nucleo_32
+STM32L031K6_NUCLEO32_LIB_INCLUDE_DIRS = $(LIB_PATH)/Drivers/BSP/STM32L0xx_Nucleo_32
+STM32L031K6_NUCLEO32_LIB = libstm32l031k6_nucleo32.a
+
+######################
+#共通ライブラリに登録#
+######################
+COMMON_LIBS+=$(COMMON_LIB_DIR)/$(STM32L031K6_NUCLEO32_LIB)
+COMMON_LIB_SRCS+=$(STM32L031K6_NUCLEO32_LIB_SRCS)
+
+#######################
+#Includeフォルダの追加#
+#######################
+INCLUDE_DIRS+=$(addprefix -I,$(STM32L031K6_NUCLEO32_LIB_INCLUDE_DIRS))
+
+####################################
+#STM32L031K6_NUCLEO32ライブラリ関係#
+####################################
+STM32L031K6_NUCLEO32_LIB_SRCS = $(wildcard $(STM32L031K6_NUCLEO32_LIB_SRC_DIR)/*.c)
+
+STM32L031K6_NUCLEO32_LIB_OBJS = $(subst ../,,$(STM32L031K6_NUCLEO32_LIB_SRCS:%.c=%.o))
+
+#STM32L031K6_NUCLEO32ライブラリの作成
+$(COMMON_LIB_DIR)/$(STM32L031K6_NUCLEO32_LIB): $(addprefix $(COMMON_LIB_DIR)/,$(STM32L031K6_NUCLEO32_LIB_OBJS))
+	@mkdir $(subst /,\,$(dir $@)) 2> NUL || echo off
+	@$(ECHO) STM32L031K6 Nucleo32 Library Generated at $(COMMON_LIB_DIR)/$(STM32L031K6_NUCLEO32_LIB)
+	@$(AR) scr $@ $^
+	@$(RANLIB) $@
+	@$(ECHO)
+
+#STM32L031K6_NUCLEO32ライブラリ内部のコンパイル
+$(addprefix $(COMMON_LIB_DIR)/,$(subst ../,,$(STM32L031K6_NUCLEO32_LIB_SRC_DIR)))/%.o:$(STM32L031K6_NUCLEO32_LIB_SRC_DIR)/%.c
+	@mkdir $(subst /,\,$(dir $@)) 2> NUL || echo off
+	$(CC) $(CFLAGS) $< -o $@
+	@$(ECHO)
+
+#STM32L031K6_NUCLEO32の静的リンクライブラリがない場合はこれを呼び出して作る(make allのときに呼び出さないのは一回一回のmake時間短縮のため)
+stm32l031k6_nucleo32: $(COMMON_LIB_DIR)/$(STM32L031K6_NUCLEO32_LIB)
