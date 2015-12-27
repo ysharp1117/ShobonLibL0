@@ -18,8 +18,7 @@ ST-LINK_CLI = "ST-LINK_CLI.exe"
 ST-LINK_CLI_OPT = ID=0
 
 #ライブラリフォルダの指定
-#LIB_PATH = ../ShobonLibL0
-LIB_PATH = ..
+LIB_PATH = ../ShobonLibL0
 
 #SystickDriverの割り込み最大数
 SYSTICKDRIVER_MAX = 8
@@ -48,7 +47,7 @@ all: $(PROJ_NAME).hex
 ######################
 #共通ライブラリの設定#
 ######################
-COMMON_LIB_DIR = ../../common_l031
+COMMON_LIB_DIR = ../common_l031
 
 ######################
 #共通ライブラリの作成#
