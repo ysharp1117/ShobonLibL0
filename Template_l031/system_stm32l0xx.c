@@ -64,6 +64,7 @@
   */
 
 #include "stm32l0xx.h"
+#include "ShobonDeviceDriver.h"
 
 #if !defined  (HSE_VALUE) 
   #define HSE_VALUE    ((uint32_t)8000000) /*!< Value of the External oscillator in Hz */
@@ -178,6 +179,11 @@ void SystemInit (void)
 #else
   SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
 #endif
+  //NVIC初期設定
+  NVICGroupInit();
+  
+  //printf()出力用にUSARTの初期化
+  USART_Init();
 }
 
 /**

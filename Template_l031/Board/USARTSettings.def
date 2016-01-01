@@ -1,0 +1,37 @@
+/*
+2016/01/01 \@y_sharp
+for NUCLEO-L031K6
+*/
+//利用するUSARTを指定
+#define USART 2
+
+//利用するUSARTのボーレートを指定
+#define BaudRate (115200)
+
+//利用するUSARTのTXピンのポートを指定
+#define TX_PORT A
+
+//利用するUSARTのTXピンを指定
+#define TX_PIN 2
+
+//利用するUSARTのRXピンのポートを指定
+#define RX_PORT A
+
+//利用するUSARTのRXピンを指定
+#define RX_PIN 15
+
+//USARTの送信DMAを指定
+#define USARTx_TX_DMA DMA1
+#define USARTx_TX_DMA_Channel DMA1_Channel7
+#define USARTx_TX_DMA_Ch 7
+#define USARTx_TX_DMA_Channel_IRQn DMA1_Channel4_5_6_7_IRQn
+#define USARTx_TX_DMA_Channel_IRQ_Handler DMA1_Channel4_5_6_7_IRQHandler
+#define USARTx_TX_DMA_CSELR 0x4
+
+//DMA送信時のバッファ変数
+#define TRNS_CNT 8//バッファの個数
+#define TRNS_BUF 16//1バッファあたりのサイズ
+
+//USART割り込みの設定
+#define USARTx_IRQn USART2_IRQn
+#define USARTx_IRQ_Handler	USART2_IRQHandler

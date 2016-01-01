@@ -40,6 +40,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include "ShobonDeviceDriver.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -74,6 +75,12 @@ int _write_r (struct _reent *r, int file, char * ptr, int len){
 	r = r;
 	file = file;
 	ptr = ptr;
+	
+	int size=0;
+	do{
+		size=send_str_DMA(ptr,len);
+	}while(size==-1);
+	len=size;
 	
 	return len;
 }

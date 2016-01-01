@@ -20,5 +20,7 @@ int main(void){
 	
 	for(;;){
 		//その他の処理
+		printf("(´･ω･`)\r\n");
+		delay_ms(100);
 	}
 }
