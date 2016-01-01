@@ -48,7 +48,7 @@ uint32_t getAHBCLK(){
  */
 uint32_t getAPB1CLK(){
 	uint32_t presq;
-	uint32_t temp = (RCC->CFGR&RCC_CFGR_PPRE1)>>10&0x7;
+	uint32_t temp = (RCC->CFGR&RCC_CFGR_PPRE1)>>8&0x7;
 	
 	if(temp&0x04){
 		unsigned int i;
@@ -71,7 +71,7 @@ uint32_t getAPB1CLK(){
  */
 uint32_t getAPB2CLK(){
 	uint32_t presq;
-	uint32_t temp = (RCC->CFGR&RCC_CFGR_PPRE2)>>13&0x7;
+	uint32_t temp = (RCC->CFGR&RCC_CFGR_PPRE2)>>11&0x7;
 	
 	if(temp&0x04){
 		unsigned int i;
