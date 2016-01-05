@@ -42,7 +42,7 @@ CMSIS_INCLUDE_DIRS =	-I $(CMSIS_DIR)/Include \
 
 #allを優先して実行するように設定
 .PHONY: clean depend all commonlib
-all: $(PROJ_NAME).hex
+all: $(PROJ_NAME).bin $(PROJ_NAME).hex
 
 ######################
 #共通ライブラリの設定#
@@ -141,6 +141,11 @@ $(PROJ_NAME).hex: $(PROJ_NAME).elf
 	@$(ECHO) Generating hex file.
 	$(OBJCOPY) -O ihex $^ $@
 	$(SIZE) $@
+	@$(ECHO)
+
+$(PROJ_NAME).bin: $(PROJ_NAME).elf
+	@$(ECHO) Generating bin file.
+	$(OBJCOPY) -O binary -S $^ $@
 	@$(ECHO)
 
 clean:
