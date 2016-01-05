@@ -149,7 +149,7 @@ $(PROJ_NAME).bin: $(PROJ_NAME).elf
 	@$(ECHO)
 
 clean:
-	$(RM) $(OBJS) $(PROJ_NAME).elf $(PROJ_NAME).map $(PROJ_NAME).hex
+	$(RM) $(OBJS) $(PROJ_NAME).elf $(PROJ_NAME).map $(PROJ_NAME).bin $(PROJ_NAME).hex
 	@$(ECHO)
 	@$(ECHO) Clean up!
 
