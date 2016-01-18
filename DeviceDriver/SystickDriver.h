@@ -10,6 +10,10 @@
 #ifndef __SYSTICK_DRIVER__
 #define __SYSTICK_DRIVER__
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 /** @defgroup SystickDriver Systick割り込み関数
  * @par us単位でタイマ割り込みを発生させて登録された関数を実行します。
  * @par 内部タイマの割り込み間隔は登録した割り込み間隔の最大公約数です。割り込みによるオーバーヘッドを減らすために全ての割り込み間隔の最大公約数をなるべく大きく取るようにして下さい(250以上を推奨)。
@@ -23,10 +27,17 @@
 #define SYSTICK_IRQ_MAX 8
 #endif
 
-extern int SystickAddInterrupt(int interval_us,void (*ptr)());
+///割り込み関数ポインタを表す型
+typedef void (*SYSTICK_INTERRUPT_FUNC)();
+
+extern int SystickAddInterrupt(int interval_us,SYSTICK_INTERRUPT_FUNC ptr);
 extern void SystickRemoveInterrupt(int id);
 extern void SystickStart(void);
 extern void SystickStop(void);
 extern uint64_t getNowTime_us(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

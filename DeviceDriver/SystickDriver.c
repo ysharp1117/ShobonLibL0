@@ -16,7 +16,7 @@
 //割り込み管理構造体の定義
 typedef struct{
 	int id;
-	void (*ptr)();
+	SYSTICK_INTERRUPT_FUNC ptr;
 	int interval_us;
 	struct SYSTICK_ARRAY* prev_ptr;
 	struct SYSTICK_ARRAY* next_ptr;
@@ -49,7 +49,7 @@ static int calcEuclid(int a,int b){
  * @return 割り込み登録番号を返します。 SystickRemoveInterrupt の際に必要となる番号です。
  * @see SystickRemoveInterrupt, SystickStart, SystickStop
  */
-int SystickAddInterrupt(int interval_us,void (*ptr)()){
+int SystickAddInterrupt(int interval_us,SYSTICK_INTERRUPT_FUNC ptr){
 	int pos;
 	int max=1;
 	static int last_pos=0;
