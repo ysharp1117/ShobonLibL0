@@ -1,8 +1,8 @@
-;/******************** (C) COPYRIGHT 2015 STMicroelectronics ********************
+;/******************** (C) COPYRIGHT 2016 STMicroelectronics ********************
 ;* File Name          : startup_stm32l083xx.s
 ;* Author             : MCD Application Team
-;* Version            : V1.4.0
-;* Date               : 16-October-2015
+;* Version            : V1.5.0
+;* Date               : 8-January-2016
 ;* Description        : STM32L083xx Ultra Low Power Devices vector 
 ;*                      This module performs:
 ;*                      - Set the initial SP
