@@ -5,6 +5,10 @@ ECHO = echo.exe
 #プロジェクト名の設定
 PROJ_NAME		= Template_l031
 
+#allを優先して実行するように設定
+.PHONY: clean depend all commonlib
+all: $(PROJ_NAME).bin $(PROJ_NAME).hex
+
 #ターゲットの定義
 TARGET			= arm-none-eabi
 
@@ -39,10 +43,6 @@ CMSIS_DIR = $(LIB_PATH)/Drivers/CMSIS
 #CMSISのインクルードするファイルがあるフォルダの指定
 CMSIS_INCLUDE_DIRS =	-I $(CMSIS_DIR)/Include \
 						-I $(CMSIS_DIR)/Device/ST/STM32L0xx/Include \
-
-#allを優先して実行するように設定
-.PHONY: clean depend all commonlib
-all: $(PROJ_NAME).bin $(PROJ_NAME).hex
 
 ######################
 #共通ライブラリの設定#
@@ -149,7 +149,7 @@ $(PROJ_NAME).bin: $(PROJ_NAME).elf
 	@$(ECHO)
 
 clean:
-	$(RM) $(OBJS) $(PROJ_NAME).elf $(PROJ_NAME).map $(PROJ_NAME).bin $(PROJ_NAME).hex
+	$(RM) $(OBJS) $(PROJ_NAME).elf $(PROJ_NAME).map $(PROJ_NAME).bin $(PROJ_NAME).hex Makefiles/Makefile.depend
 	@$(ECHO)
 	@$(ECHO) Clean up!
 
@@ -157,14 +157,16 @@ depend:
 	@$(RM) Makefiles/Makefile.depend
 	@$(ECHO) Generating Makefile.depend
 	@$(CC) -MM -w $(CFLAGS) $(USER_SRCS) >>Makefiles/Makefile.depend
-	@$(CC) -MM -w $(CFLAGS) $(DEVICE_DRIVER_SRCS) >>Makefiles/Makefile.depend
+	@$(CC) -MM -w $(CFLAGS) $(DEVICE_DRIVER_SRCS)>Makefiles/Makefile.depend_dev
+	@sed -e "s/^.*\.o/$(subst /,\/,$(DEVICE_DRIVER_OUT_DIR))\/&/g" Makefiles/Makefile.depend_dev>>Makefiles/Makefile.depend
+	@$(RM) Makefiles/Makefile.depend_dev
 #	@$(CC) -MM -w $(CFLAGS) $(COMMON_LIB_SRCS) >>Makefiles/Makefile.depend
 
 rom:
 	@$(ECHO) Write binary to STM32 ROM(DFU)
 	dfuw $(PROJ_NAME).hex
 
-swd: $(PROJ_NAME).hex
+swd: all
 	@$(ECHO) Write binary to STM32 ROM(SWD)
 	@$(ST-LINK_CLI) -c SWD $(ST-LINK_CLI_OPT) -P $(PROJ_NAME).hex -V
 
