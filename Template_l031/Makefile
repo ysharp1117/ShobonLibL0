@@ -121,7 +121,7 @@ CFLAGS+=-D"STM32L031xx"
 CFLAGS+=-D"SYSTICK_IRQ_MAX=$(SYSTICKDRIVER_MAX)"
 
 #C++向けのオプション設定
-#CXXFLAGS= -fno-rtti -fno-exceptions -fnostartfiles $(CFLAGS)
+CXXFLAGS= -fno-rtti -fno-exceptions $(CFLAGS)
 
 #ユーザーオブジェクトファイル一覧
 USER_OBJS := $(filter %.o,$(patsubst %.c,%.o,$(USER_SRCS))) $(filter %.o,$(patsubst %.cpp,%.o,$(USER_SRCS))) $(START_UP_ASM:%.s=%.o)
@@ -184,9 +184,9 @@ commonlib:$(COMMON_LIBS)
 	@$(ECHO)
 
 .cpp.o:
-	$(CXX) $(CFLAGS) $< -o $@
+	$(CXX) $(CXXFLAGS) $< -o $@
 #アセンブラコードも出力してみる
-#	$(CXX) $(CFLAGS) -S $<
+#	$(CXX) $(CXXFLAGS) -S $<
 	@$(ECHO)
 
 .s.o:
