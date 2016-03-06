@@ -24,7 +24,11 @@ HAL_LIB_OBJS = $(subst ../,,$(HAL_LIB_SRCS:%.c=%.o))
 
 #HALライブラリの作成
 $(COMMON_LIB_DIR)/$(HAL_LIB): $(addprefix $(COMMON_LIB_DIR)/,$(HAL_LIB_OBJS))
-	@mkdir $(subst /,\,$(dir $@)) 2> NUL || echo off
+ifeq ($(OS),Windows_NT)
+	@$(MKDIR) $(subst /,\,$(dir $@)) 2> NUL || echo off
+else
+	@$(MKDIR) $(dir $@)
+endif
 	@$(ECHO) ST HAL Library Generated at $(COMMON_LIB_DIR)/$(HAL_LIB)
 	@$(AR) scr $@ $^
 	@$(RANLIB) $@
@@ -32,7 +36,11 @@ $(COMMON_LIB_DIR)/$(HAL_LIB): $(addprefix $(COMMON_LIB_DIR)/,$(HAL_LIB_OBJS))
 
 #HALライブラリ内部のコンパイル
 $(addprefix $(COMMON_LIB_DIR)/,$(subst ../,,$(HAL_LIB_SRC_DIR)))/%.o:$(HAL_LIB_SRC_DIR)/%.c
-	@mkdir $(subst /,\,$(dir $@)) 2> NUL || echo off
+ifeq ($(OS),Windows_NT)
+	@$(MKDIR) $(subst /,\,$(dir $@)) 2> NUL || echo off
+else
+	@$(MKDIR) $(dir $@)
+endif
 	$(CC) $(CFLAGS) $< -o $@
 	@$(ECHO)
 

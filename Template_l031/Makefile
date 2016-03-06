@@ -1,7 +1,3 @@
-SHELL=cmd
-
-ECHO = echo.exe
-
 #プロジェクト名の設定
 PROJ_NAME		= Template_l031
 
@@ -91,6 +87,14 @@ OBJCOPY			= $(TARGET_PREFIX)objcopy
 SIZE			= $(TARGET_PREFIX)size
 RANLIB			= $(TARGET_PREFIX)ranlib
 RM				= rm -rf
+ifeq ($(OS),Windows_NT)
+	ECHO		= echo.exe
+	MKDIR		= mkdir
+else
+	ECHO		= echo
+	MKDIR		= mkdir -p
+endif
+
 
 #ソースコードのリストを作成
 USER_SRCS := $(wildcard ./*.c) $(wildcard ./*.cpp)

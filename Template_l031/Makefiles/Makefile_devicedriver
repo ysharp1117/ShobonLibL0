@@ -21,11 +21,19 @@ OBJS+=$(DEVICE_DRIVER_OBJS)
 
 #デバイスドライバのコンパイル
 $(DEVICE_DRIVER_OUT_DIR)/%.o:$(DEVICE_DRIVER_SRC_DIR)/%.c
-	@mkdir $(subst /,\,$(dir $@)) 2> NUL || echo off
+ifeq ($(OS),Windows_NT)
+	@$(MKDIR) $(subst /,\,$(dir $@)) 2> NUL || echo off
+else
+	@$(MKDIR) $(dir $@)
+endif
 	$(CC) $(CFLAGS) $< -o $@
 	@$(ECHO)
 
 $(DEVICE_DRIVER_OUT_DIR)/%.o:$(DEVICE_DRIVER_SRC_DIR)/%.cpp
-	@mkdir $(subst /,\,$(dir $@)) 2> NUL || echo off
+ifeq ($(OS),Windows_NT)
+	@$(MKDIR) $(subst /,\,$(dir $@)) 2> NUL || echo off
+else
+	@$(MKDIR) $(dir $@)
+endif
 	$(CC) $(CFLAGS) $< -o $@
 	@$(ECHO)
