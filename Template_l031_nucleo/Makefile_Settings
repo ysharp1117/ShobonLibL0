@@ -1,0 +1,14 @@
+################
+#ユーザ毎の設定#
+################
+#ライブラリフォルダの指定
+LIB_PATH = ../ShobonLibL0
+
+#ボードごとの共通設定ファイルフォルダを指定
+BOARD_SETTINGS_PATH = $(LIB_PATH)/Settings/l031_nucleo
+
+#共通ライブラリ出力フォルダの指定
+COMMON_LIB_DIR = ../common_l031_nucleo
+
+#ST-LINK UtilityによるSWD書き込みの場合のCUIインタフェースのオプション
+ST-LINK_CLI_OPT = ID=0

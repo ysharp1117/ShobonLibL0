@@ -1,10 +1,3 @@
-#プロジェクト名の設定
-PROJ_NAME		= Template_l031
-
-#allを優先して実行するように設定
-.PHONY: clean depend all commonlib
-all: $(PROJ_NAME).bin $(PROJ_NAME).hex
-
 #ターゲットの定義
 TARGET			= arm-none-eabi
 
@@ -13,15 +6,6 @@ HSE_VALUE		= 8000000
 
 #SWD書き込みの場合のCUIインタフェース名
 ST-LINK_CLI = "ST-LINK_CLI.exe"
-
-#SWD書き込みの場合のCUIインタフェースのオプション
-ST-LINK_CLI_OPT = ID=0
-
-#ライブラリフォルダの指定
-LIB_PATH = ../ShobonLibL0
-
-#SystickDriverの割り込み最大数
-SYSTICKDRIVER_MAX = 8
 
 ############################
 #メインのユーザファイル関係#
@@ -41,21 +25,17 @@ CMSIS_INCLUDE_DIRS =	-I $(CMSIS_DIR)/Include \
 						-I $(CMSIS_DIR)/Device/ST/STM32L0xx/Include \
 
 ######################
-#共通ライブラリの設定#
-######################
-COMMON_LIB_DIR = ../common_l031
-
-######################
 #共通ライブラリの作成#
 ######################
-include Makefiles/Makefile_dsplib
-include Makefiles/Makefile_hallib
-include Makefiles/Makefile_stm32l031k6_nucleo32
+include $(BOARD_SETTINGS_PATH)/Makefile_dsplib
+include $(BOARD_SETTINGS_PATH)/Makefile_hallib
+include $(BOARD_SETTINGS_PATH)/Makefile_stm32l031k6_nucleo32
 
 ######################
 #個別ライブラリの設定#
 ######################
-include Makefiles/Makefile_devicedriver
+include $(BOARD_SETTINGS_PATH)/Makefile_devicedriver
+include $(BOARD_SETTINGS_PATH)/Makefile_board
 
 ###########
 #リンカ関係#
@@ -68,7 +48,7 @@ LINKER_NAME = STM32L031.ld
 ############################
 #スタートアップファイル関連#
 ############################
-START_UP_DIR	:= .
+START_UP_DIR	:= $(CMSIS_DIR)/Device/ST/STM32L0xx/Source/Templates/gcc
 START_UP_FILE	:= startup_stm32l031xx.s
 START_UP_ASM	:= $(START_UP_DIR)/$(START_UP_FILE)
 
@@ -128,7 +108,7 @@ CFLAGS+=-D"SYSTICK_IRQ_MAX=$(SYSTICKDRIVER_MAX)"
 CXXFLAGS= -fno-rtti -fno-exceptions $(CFLAGS)
 
 #ユーザーオブジェクトファイル一覧
-USER_OBJS := $(filter %.o,$(patsubst %.c,%.o,$(USER_SRCS))) $(filter %.o,$(patsubst %.cpp,%.o,$(USER_SRCS))) $(START_UP_ASM:%.s=%.o)
+USER_OBJS := $(filter %.o,$(patsubst %.c,%.o,$(USER_SRCS))) $(filter %.o,$(patsubst %.cpp,%.o,$(USER_SRCS))) $(notdir $(START_UP_ASM:%.s=%.o))
 
 #全オブジェクトファイルにユーザオブジェクトを登録
 OBJS+=$(USER_OBJS)
@@ -152,19 +132,19 @@ $(PROJ_NAME).bin: $(PROJ_NAME).elf
 	$(OBJCOPY) -O binary -S $^ $@
 	@$(ECHO)
 
-clean:
-	$(RM) $(OBJS) $(PROJ_NAME).elf $(PROJ_NAME).map $(PROJ_NAME).bin $(PROJ_NAME).hex Makefiles/Makefile.depend
+clean: depend
+	$(RM) $(OBJS) $(PROJ_NAME).elf $(PROJ_NAME).map $(PROJ_NAME).bin $(PROJ_NAME).hex
 	@$(ECHO)
 	@$(ECHO) Clean up!
 
 depend:
-	@$(RM) Makefiles/Makefile.depend
+	@$(RM) Makefile.depend
 	@$(ECHO) Generating Makefile.depend
-	@$(CC) -MM -w $(CFLAGS) $(USER_SRCS) >>Makefiles/Makefile.depend
-	@$(CC) -MM -w $(CFLAGS) $(DEVICE_DRIVER_SRCS)>Makefiles/Makefile.depend_dev
-	@sed -e "s/^.*\.o/$(subst /,\/,$(DEVICE_DRIVER_OUT_DIR))\/&/g" Makefiles/Makefile.depend_dev>>Makefiles/Makefile.depend
-	@$(RM) Makefiles/Makefile.depend_dev
-#	@$(CC) -MM -w $(CFLAGS) $(COMMON_LIB_SRCS) >>Makefiles/Makefile.depend
+	@$(CC) -MM -w $(CFLAGS) $(USER_SRCS) >>Makefile.depend
+	@$(CC) -MM -w $(CFLAGS) $(DEVICE_DRIVER_SRCS)>Makefile.depend_dev
+	@sed -e "s/^.*\.o/$(subst /,\/,$(DEVICE_DRIVER_OUT_DIR))\/&/g" Makefile.depend_dev>>Makefile.depend
+	@$(RM) Makefile.depend_dev
+#	@$(CC) -MM -w $(CFLAGS) $(COMMON_LIB_SRCS) >>Makefile.depend
 
 rom:
 	@$(ECHO) Write binary to STM32 ROM(DFU)
@@ -175,10 +155,21 @@ swd: all
 	@$(ST-LINK_CLI) -c SWD $(ST-LINK_CLI_OPT) -P $(PROJ_NAME).hex -V
 
 #依存関係を取り込む
--include Makefiles/Makefile.depend
+-include Makefile.depend
 
 #共通ライブラリの一括コンパイル
 commonlib:$(COMMON_LIBS)
+
+#スタートアップファイルのコンパイル
+$(notdir $(START_UP_ASM:%.s=%.o)):$(START_UP_ASM)
+ifeq ($(OS),Windows_NT)
+	@$(MKDIR) $(subst /,\,$(dir $@)) 2> NUL || echo off
+else
+	@$(MKDIR) $(dir $@)
+endif
+	$(CC) $(CFLAGS) $< -o $@
+	@$(ECHO)
+
 
 #その他
 .c.o:
@@ -190,7 +181,7 @@ commonlib:$(COMMON_LIBS)
 .cpp.o:
 	$(CXX) $(CXXFLAGS) $< -o $@
 #アセンブラコードも出力してみる
-#	$(CXX) $(CXXFLAGS) -S $<
+#	$(CXX) $(CFLAGS) -S $<
 	@$(ECHO)
 
 .s.o:

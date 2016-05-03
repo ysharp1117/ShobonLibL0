@@ -1,0 +1,38 @@
+#ボード固有ファイル出力先の指定
+BOARD_OUT_BASE_DIR = ./out
+BOARD_OUT_DIR = $(addprefix $(BOARD_OUT_BASE_DIR)/,$(subst ../,,$(BOARD_SETTINGS_PATH)))
+
+#######################
+#Includeフォルダの追加#
+#######################
+INCLUDE_DIRS+=$(addprefix -I,$(BOARD_SETTINGS_PATH))
+
+########################
+#ボード固有ファイル関係#
+########################
+BOARD_SRCS = $(wildcard $(BOARD_SETTINGS_PATH)/*.c) $(wildcard $(BOARD_SETTINGS_PATH)/*.cpp)
+BOARD_OBJS = \
+$(filter %.o,$(notdir $(BOARD_SRCS:%.c=%.o)))\
+$(filter %.o,$(notdir $(BOARD_SRCS:%.cpp=%.o)))
+BOARD_OBJS := $(addprefix $(BOARD_OUT_DIR)/,$(BOARD_OBJS))
+
+OBJS+=$(BOARD_OBJS)
+
+#ボード固有ファイルのコンパイル
+$(BOARD_OUT_DIR)/%.o:$(BOARD_SETTINGS_PATH)/%.c
+ifeq ($(OS),Windows_NT)
+	@$(MKDIR) $(subst /,\,$(dir $@)) 2> NUL || echo off
+else
+	@$(MKDIR) $(dir $@)
+endif
+	$(CC) $(CFLAGS) $< -o $@
+	@$(ECHO)
+
+$(BOARD_OUT_DIR)/%.o:$(BOARD_SETTINGS_PATH)/%.cpp
+ifeq ($(OS),Windows_NT)
+	@$(MKDIR) $(subst /,\,$(dir $@)) 2> NUL || echo off
+else
+	@$(MKDIR) $(dir $@)
+endif
+	$(CC) $(CFLAGS) $< -o $@
+	@$(ECHO)

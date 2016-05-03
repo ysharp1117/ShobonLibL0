@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include "stm32l0xx.h"
-#include "stm32l0xx_hal.h"
 #include "stm32l0xx_nucleo_32.h"
 #include "ShobonDeviceDriver.h"
 #include "main.h"
