@@ -37,6 +37,14 @@ include $(BOARD_SETTINGS_PATH)/Makefile_stm32l031k6_nucleo32
 include $(BOARD_SETTINGS_PATH)/Makefile_devicedriver
 include $(BOARD_SETTINGS_PATH)/Makefile_board
 
+##############
+#デバッガ関係#
+##############
+#ST-LINK Utility利用時のST-LINK S/N設定
+ifdef ST-LINK_SERIAL
+	ST-LINK_CLI_SN = "SN=$(ST-LINK_SERIAL)"
+endif
+
 ###########
 #リンカ関係#
 ###########
@@ -152,7 +160,7 @@ rom:
 
 swd: all
 	@$(ECHO) Write binary to STM32 ROM(SWD)
-	@$(ST-LINK_CLI) -c SWD $(ST-LINK_CLI_OPT) -P $(PROJ_NAME).hex -V
+	@$(ST-LINK_CLI) -c SWD $(ST-LINK_CLI_SN) -P $(PROJ_NAME).hex -V $(ST-LINK_CLI_OPT)
 
 #依存関係を取り込む
 -include Makefile.depend

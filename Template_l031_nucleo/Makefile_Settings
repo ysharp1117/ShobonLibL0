@@ -10,5 +10,8 @@ BOARD_SETTINGS_PATH = $(LIB_PATH)/Settings/l031_nucleo
 #共通ライブラリ出力フォルダの指定
 COMMON_LIB_DIR = ../common_l031_nucleo
 
-#ST-LINK UtilityによるSWD書き込みの場合のCUIインタフェースのオプション
-ST-LINK_CLI_OPT = ID=0
+#ST-LINKを複数接続しているときは24桁(?)のシリアル番号を明示的に指定すること
+#ST-LINK_SERIAL = 000000000000000000000000
+
+#ST-LINK UtilityによるSWD書き込みの場合のCUIインタフェースのオプション(末尾に追記される)
+#ST-LINK_CLI_OPT = -Rst#書き込み後にリセット
