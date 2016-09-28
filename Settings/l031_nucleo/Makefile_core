@@ -113,7 +113,7 @@ CFLAGS+=-D"STM32L031xx"
 CFLAGS+=-D"SYSTICK_IRQ_MAX=$(SYSTICKDRIVER_MAX)"
 
 #C++向けのオプション設定
-CXXFLAGS= -fno-rtti -fno-exceptions $(CFLAGS)
+CXXFLAGS+= -fno-rtti -fno-exceptions $(CFLAGS)
 
 #ユーザーオブジェクトファイル一覧
 USER_OBJS := $(filter %.o,$(patsubst %.c,%.o,$(USER_SRCS))) $(filter %.o,$(patsubst %.cpp,%.o,$(USER_SRCS))) $(notdir $(START_UP_ASM:%.s=%.o))
@@ -128,17 +128,16 @@ $(PROJ_NAME).elf: $(OBJS) $(COMMON_LIB_DEPENDS)
 	@$(ECHO) Generating elf file.
 	$(LD) -o $@ $(OBJS) $(LDFLAGS) $(COMMON_LIBS)
 	@$(ECHO)
+	@$(SIZE) $@
+	@$(ECHO)
 
 $(PROJ_NAME).hex: $(PROJ_NAME).elf
 	@$(ECHO) Generating hex file.
-	$(OBJCOPY) -O ihex $^ $@
-	$(SIZE) $@
-	@$(ECHO)
+	@$(OBJCOPY) -O ihex $^ $@
 
 $(PROJ_NAME).bin: $(PROJ_NAME).elf
 	@$(ECHO) Generating bin file.
-	$(OBJCOPY) -O binary -S $^ $@
-	@$(ECHO)
+	@$(OBJCOPY) -O binary -S $^ $@
 
 clean: depend
 	$(RM) $(OBJS) $(PROJ_NAME).elf $(PROJ_NAME).map $(PROJ_NAME).bin $(PROJ_NAME).hex
