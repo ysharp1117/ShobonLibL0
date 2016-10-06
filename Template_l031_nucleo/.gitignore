@@ -1,1 +1,8 @@
+*.o
+/*.bin
+/*.elf
+/*.hex
+/*.map
 /Makefile_Settings
+/Makefile.depend
+/out
