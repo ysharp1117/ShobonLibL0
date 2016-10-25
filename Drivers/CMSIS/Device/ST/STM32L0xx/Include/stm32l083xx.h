@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32l083xx.h
   * @author  MCD Application Team
-  * @version V1.5.0
-  * @date    8-January-2016
+  * @version V1.6.0
+  * @date    15-April-2016
   * @brief   CMSIS Cortex-M0+ Device Peripheral Access Layer Header File. 
   *          This file contains all the peripheral register's definitions, bits 
   *          definitions and memory mapping for stm32l083xx devices.  
@@ -16,7 +16,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2015 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -670,6 +670,8 @@ typedef struct
 #define DATA_EEPROM_BANK1_END  ((uint32_t)0x08080BFFU) /*!< Program end DATA EEPROM BANK1 address */
 #define DATA_EEPROM_BANK2_END  ((uint32_t)0x080817FFU) /*!< Program end DATA EEPROM BANK2 address */
 #define SRAM_BASE              ((uint32_t)0x20000000U) /*!< SRAM base address in the alias region */
+#define SRAM_SIZE_MAX          ((uint32_t)0x00005000U) /*!< maximum SRAM size (up to 20KBytes) */
+
 #define PERIPH_BASE            ((uint32_t)0x40000000U) /*!< Peripheral base address in the alias region */
 
 /*!< Peripheral memory map */
@@ -726,6 +728,8 @@ typedef struct
 #define RCC_BASE              (AHBPERIPH_BASE + 0x00001000)
 #define FLASH_R_BASE          (AHBPERIPH_BASE + 0x00002000) /*!< FLASH registers base address */
 #define OB_BASE               ((uint32_t)0x1FF80000U)        /*!< FLASH Option Bytes base address */
+#define FLASHSIZE_BASE        ((uint32_t)0x1FF8007CU)        /*!< FLASH Size register base address */
+#define UID_BASE              ((uint32_t)0x1FF80050U)        /*!< Unique device ID register base address  */
 #define CRC_BASE              (AHBPERIPH_BASE + 0x00003000)
 #define TSC_BASE              (AHBPERIPH_BASE + 0x00004000)
 #define RNG_BASE              (AHBPERIPH_BASE + 0x00005000)
@@ -1405,7 +1409,6 @@ typedef struct
 #define DMA_CSELR_C6S                       ((uint32_t)0x00F00000U)          /*!< Channel 6 Selection */ 
 #define DMA_CSELR_C7S                       ((uint32_t)0x0F000000U)          /*!< Channel 7 Selection */
 
-
 /******************************************************************************/
 /*                                                                            */
 /*                 External Interrupt/Event Controller (EXTI)                 */
@@ -1442,6 +1445,8 @@ typedef struct
 #define EXTI_IMR_IM26                       ((uint32_t)0x04000000U)        /*!< Interrupt Mask on line 26 */
 #define EXTI_IMR_IM28                       ((uint32_t)0x10000000U)        /*!< Interrupt Mask on line 28 */
 #define EXTI_IMR_IM29                       ((uint32_t)0x20000000U)        /*!< Interrupt Mask on line 29 */
+
+#define EXTI_IMR_IM                       ((uint32_t)0x37FFFFFFU)        /*!< Interrupt Mask All */
 
 /******************  Bit definition for EXTI_EMR register  ********************/
 #define EXTI_EMR_EM0                        ((uint32_t)0x00000001U)        /*!< Event Mask on line 0  */
@@ -2353,6 +2358,8 @@ typedef struct
 /*                                                                            */
 /******************************************************************************/
 
+#define PWR_PVD_SUPPORT                     /*!< PVD feature available on all devices: Power Voltage Detection feature */
+
 /********************  Bit definition for PWR_CR register  ********************/
 #define PWR_CR_LPSDSR                       ((uint32_t)0x00000001U)     /*!< Low-power deepsleep/sleep/low power run */
 #define PWR_CR_PDDS                         ((uint32_t)0x00000002U)     /*!< Power Down Deepsleep */
@@ -2402,6 +2409,9 @@ typedef struct
 /*                         Reset and Clock Control                            */
 /*                                                                            */
 /******************************************************************************/
+
+#define RCC_HSI48_SUPPORT           /*!< HSI48 feature support */
+#define RCC_HSECSS_SUPPORT          /*!< HSE CSS feature activation support */
 
 /********************  Bit definition for RCC_CR register  ********************/
 #define RCC_CR_HSION                        ((uint32_t)0x00000001U)        /*!< Internal High Speed clock enable */
@@ -2550,15 +2560,15 @@ typedef struct
 #define RCC_CFGR_MCOSEL_2                   ((uint32_t)0x04000000U)        /*!< Bit 2 */
 #define RCC_CFGR_MCOSEL_3                   ((uint32_t)0x08000000U)        /*!< Bit 3 */
 
-#define RCC_CFGR_MCO_NOCLOCK                ((uint32_t)0x00000000U)        /*!< No clock */
-#define RCC_CFGR_MCO_SYSCLK                 ((uint32_t)0x01000000U)        /*!< System clock selected as MCO source */
-#define RCC_CFGR_MCO_HSI                    ((uint32_t)0x02000000U)        /*!< Internal 16 MHz RC oscillator clock selected */
-#define RCC_CFGR_MCO_MSI                    ((uint32_t)0x03000000U)        /*!< Internal Medium Speed RC oscillator clock selected */
-#define RCC_CFGR_MCO_HSE                    ((uint32_t)0x04000000U)        /*!< External 1-25 MHz oscillator clock selected */
-#define RCC_CFGR_MCO_PLL                    ((uint32_t)0x05000000U)        /*!< PLL clock divided */
-#define RCC_CFGR_MCO_LSI                    ((uint32_t)0x06000000U)        /*!< LSI selected */
-#define RCC_CFGR_MCO_LSE                    ((uint32_t)0x07000000U)        /*!< LSE selected */
-#define RCC_CFGR_MCO_HSI48                  ((uint32_t)0x08000000U)        /*!< HSI48 clock selected as MCO source */
+#define RCC_CFGR_MCOSEL_NOCLOCK                ((uint32_t)0x00000000U)        /*!< No clock */
+#define RCC_CFGR_MCOSEL_SYSCLK                 ((uint32_t)0x01000000U)        /*!< System clock selected as MCO source */
+#define RCC_CFGR_MCOSEL_HSI                    ((uint32_t)0x02000000U)        /*!< Internal 16 MHz RC oscillator clock selected */
+#define RCC_CFGR_MCOSEL_MSI                    ((uint32_t)0x03000000U)        /*!< Internal Medium Speed RC oscillator clock selected */
+#define RCC_CFGR_MCOSEL_HSE                    ((uint32_t)0x04000000U)        /*!< External 1-25 MHz oscillator clock selected */
+#define RCC_CFGR_MCOSEL_PLL                    ((uint32_t)0x05000000U)        /*!< PLL clock divided */
+#define RCC_CFGR_MCOSEL_LSI                    ((uint32_t)0x06000000U)        /*!< LSI selected */
+#define RCC_CFGR_MCOSEL_LSE                    ((uint32_t)0x07000000U)        /*!< LSE selected */
+#define RCC_CFGR_MCOSEL_HSI48                  ((uint32_t)0x08000000U)        /*!< HSI48 clock selected as MCO source */
 
 #define RCC_CFGR_MCOPRE                    ((uint32_t)0x70000000U)        /*!< MCO prescaler */
 #define RCC_CFGR_MCOPRE_0                  ((uint32_t)0x10000000U)        /*!< MCO is divided by 2 */
@@ -2572,6 +2582,16 @@ typedef struct
 #define RCC_CFGR_MCOPRE_DIV16              ((uint32_t)0x40000000U)        /*!< MCO is divided by 16 */
 
 /* Legacy defines */
+#define RCC_CFGR_MCO_NOCLOCK   RCC_CFGR_MCOSEL_NOCLOCK   
+#define RCC_CFGR_MCO_SYSCLK    RCC_CFGR_MCOSEL_SYSCLK    
+#define RCC_CFGR_MCO_HSI       RCC_CFGR_MCOSEL_HSI       
+#define RCC_CFGR_MCO_MSI       RCC_CFGR_MCOSEL_MSI       
+#define RCC_CFGR_MCO_HSE       RCC_CFGR_MCOSEL_HSE       
+#define RCC_CFGR_MCO_PLL       RCC_CFGR_MCOSEL_PLL       
+#define RCC_CFGR_MCO_LSI       RCC_CFGR_MCOSEL_LSI       
+#define RCC_CFGR_MCO_LSE       RCC_CFGR_MCOSEL_LSE       
+#define RCC_CFGR_MCO_HSI48     RCC_CFGR_MCOSEL_HSI48   
+
 #define RCC_CFGR_MCO_PRE                    RCC_CFGR_MCOPRE          /*!< MCO prescaler */
 #define RCC_CFGR_MCO_PRE_1                  RCC_CFGR_MCOPRE_DIV1        /*!< MCO is divided by 1 */
 #define RCC_CFGR_MCO_PRE_2                  RCC_CFGR_MCOPRE_DIV2        /*!< MCO is divided by 1 */
@@ -2909,6 +2929,15 @@ typedef struct
 /*                           Real-Time Clock (RTC)                            */
 /*                                                                            */
 /******************************************************************************/
+/*
+* @brief Specific device feature definitions
+*/
+#define RTC_TAMPER1_SUPPORT
+#define RTC_TAMPER2_SUPPORT
+#define RTC_TAMPER3_SUPPORT
+#define RTC_WAKEUP_SUPPORT
+#define RTC_BACKUP_SUPPORT
+
 /********************  Bits definition for RTC_TR register  *******************/
 #define RTC_TR_PM                            ((uint32_t)0x00400000U)        /*!<  */
 #define RTC_TR_HT                            ((uint32_t)0x00300000U)        /*!<  */
@@ -3266,13 +3295,19 @@ typedef struct
 #define RTC_BKP4R                            ((uint32_t)0xFFFFFFFFU)        /*!<  */
 
 /******************** Number of backup registers ******************************/
-#define RTC_BKP_NUMBER                       ((uint32_t)0x00000005U)        /*!<  */
+#define RTC_BKP_NUMBER                       (0x00000005U)                  /*!<  */
 
 /******************************************************************************/
 /*                                                                            */
 /*                        Serial Peripheral Interface (SPI)                   */
 /*                                                                            */
 /******************************************************************************/
+
+/*
+ * @brief Specific device feature definitions (not present on all devices in the STM32L0 family)
+ */
+#define SPI_I2S_SUPPORT                       /*!< I2S support */
+
 /*******************  Bit definition for SPI_CR1 register  ********************/
 #define SPI_CR1_CPHA                        ((uint32_t)0x00000001U)            /*!< Clock Phase */
 #define SPI_CR1_CPOL                        ((uint32_t)0x00000002U)            /*!< Clock Polarity */
@@ -3549,7 +3584,6 @@ typedef struct
 
 
 /*****************  Bit definition for SYSCFG_CFGR3 register  ****************/
-#define SYSCFG_CFGR3_EN_VREFINT               ((uint32_t)0x00000001U) /*!< Vref Enable bit*/
 #define SYSCFG_CFGR3_VREF_OUT                 ((uint32_t)0x00000030U) /*!< Verf_ADC connection bit */
 #define SYSCFG_CFGR3_VREF_OUT_0               ((uint32_t)0x00000010U) /*!< Bit 0 */
 #define SYSCFG_CFGR3_VREF_OUT_1               ((uint32_t)0x00000020U) /*!< Bit 1 */
@@ -3557,21 +3591,20 @@ typedef struct
 #define SYSCFG_CFGR3_ENBUF_SENSOR_ADC         ((uint32_t)0x00000200U) /*!< Sensor reference for ADC enable bit */
 #define SYSCFG_CFGR3_ENBUFLP_VREFINT_COMP     ((uint32_t)0x00001000U) /*!< VREFINT reference for comparator 2 enable bit */
 #define SYSCFG_CFGR3_ENREF_HSI48              ((uint32_t)0x00002000U) /*!< VREFINT reference or 48 MHz RC oscillator enable bit */
-#define SYSCFG_CFGR3_REF_HSI48_RDYF           ((uint32_t)0x04000000U) /*!< VREFINT for 48 MHz RC oscillator ready flag */
-#define SYSCFG_CFGR3_SENSOR_ADC_RDYF          ((uint32_t)0x08000000U) /*!< Sensor for ADC ready flag */
-#define SYSCFG_CFGR3_VREFINT_ADC_RDYF         ((uint32_t)0x10000000U) /*!< VREFINT for ADC ready flag */
-#define SYSCFG_CFGR3_VREFINT_COMP_RDYF        ((uint32_t)0x20000000U) /*!< VREFINT for comparator ready flag */
 #define SYSCFG_CFGR3_VREFINT_RDYF             ((uint32_t)0x40000000U) /*!< VREFINT ready flag */
 #define SYSCFG_CFGR3_REF_LOCK                 ((uint32_t)0x80000000U) /*!< CFGR3 lock bit */
 
 /* Legacy defines */
 
-#define SYSCFG_CFGR3_EN_BGAP                  SYSCFG_CFGR3_EN_VREFINT
 #define SYSCFG_CFGR3_ENBUF_BGAP_ADC           SYSCFG_CFGR3_ENBUF_VREFINT_ADC
 #define SYSCFG_CFGR3_ENBUFLP_BGAP_COMP        SYSCFG_CFGR3_ENBUFLP_VREFINT_COMP
 #define SYSCFG_CFGR3_ENREF_RC48MHz            SYSCFG_CFGR3_ENREF_HSI48
-#define SYSCFG_CFGR3_REF_RC48MHz_RDYF         SYSCFG_CFGR3_REF_HSI48_RDYF
-#define SYSCFG_VREFINT_ADC_RDYF               SYSCFG_CFGR3_VREFINT_ADC_RDYF
+#define SYSCFG_CFGR3_REF_RC48MHz_RDYF         SYSCFG_CFGR3_VREFINT_RDYF
+#define SYSCFG_CFGR3_REF_HSI48_RDYF           SYSCFG_CFGR3_VREFINT_RDYF
+#define SYSCFG_VREFINT_ADC_RDYF               SYSCFG_CFGR3_VREFINT_RDYF
+#define SYSCFG_CFGR3_SENSOR_ADC_RDYF          SYSCFG_CFGR3_VREFINT_RDYF
+#define SYSCFG_CFGR3_VREFINT_ADC_RDYF         SYSCFG_CFGR3_VREFINT_RDYF
+#define SYSCFG_CFGR3_VREFINT_COMP_RDYF        SYSCFG_CFGR3_VREFINT_RDYF
 
 /******************************************************************************/
 /*                                                                            */
@@ -4440,6 +4473,7 @@ typedef struct
 
 /******************************* ADC Instances ********************************/
 #define IS_ADC_ALL_INSTANCE(INSTANCE) ((INSTANCE) == ADC1)
+#define IS_ADC_COMMON_INSTANCE(INSTANCE) ((INSTANCE) == ADC1_COMMON)
 
 /******************************* AES Instances ********************************/
 #define IS_AES_ALL_INSTANCE(INSTANCE) ((INSTANCE) == AES)
@@ -4457,14 +4491,13 @@ typedef struct
 #define IS_DAC_ALL_INSTANCE(INSTANCE) ((INSTANCE) == DAC)
 
 /******************************* DMA Instances *********************************/
-#define IS_DMA_STREAM_ALL_INSTANCE(INSTANCE) (((INSTANCE) == DMA1_Stream0) || \
-                                              ((INSTANCE) == DMA1_Stream1) || \
-                                              ((INSTANCE) == DMA1_Stream2) || \
-                                              ((INSTANCE) == DMA1_Stream3) || \
-                                              ((INSTANCE) == DMA1_Stream4) || \
-                                              ((INSTANCE) == DMA1_Stream5) || \
-                                              ((INSTANCE) == DMA1_Stream6) || \
-                                              ((INSTANCE) == DMA1_Stream7))
+#define IS_DMA_ALL_INSTANCE(INSTANCE) (((INSTANCE) == DMA1_Channel1) || \
+                                       ((INSTANCE) == DMA1_Channel2) || \
+                                       ((INSTANCE) == DMA1_Channel3) || \
+                                       ((INSTANCE) == DMA1_Channel4) || \
+                                       ((INSTANCE) == DMA1_Channel5) || \
+                                       ((INSTANCE) == DMA1_Channel6) || \
+                                       ((INSTANCE) == DMA1_Channel7))
 
 /******************************* GPIO Instances *******************************/
 #define IS_GPIO_ALL_INSTANCE(INSTANCE) (((INSTANCE) == GPIOA) || \
@@ -4485,6 +4518,11 @@ typedef struct
 #define IS_I2C_ALL_INSTANCE(INSTANCE) (((INSTANCE) == I2C1) || \
                                        ((INSTANCE) == I2C2) || \
                                        ((INSTANCE) == I2C3))
+
+/****************** I2C Instances : wakeup capability from stop modes *********/
+#define IS_I2C_WAKEUP_FROMSTOP_INSTANCE(INSTANCE) (((INSTANCE) == I2C1) || \
+                                                   ((INSTANCE) == I2C3))
+
 
 /******************************** I2S Instances *******************************/
 #define IS_I2S_ALL_INSTANCE(INSTANCE)  ((INSTANCE) == SPI2)
@@ -4695,6 +4733,9 @@ typedef struct
 /*********************** UART Instances : IRDA mode ***************************/
 #define IS_IRDA_INSTANCE(INSTANCE) (((INSTANCE) == USART1) || \
                                     ((INSTANCE) == USART2))
+
+/******************** LPUART Instance *****************************************/
+#define IS_LPUART_INSTANCE(INSTANCE)    ((INSTANCE) == LPUART1)
 
 /****************************** IWDG Instances ********************************/
 #define IS_IWDG_ALL_INSTANCE(INSTANCE)  ((INSTANCE) == IWDG)

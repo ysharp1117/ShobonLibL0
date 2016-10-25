@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file      startup_stm32l061xx.s
   * @author    MCD Application Team
-  * @version   V1.5.0
-  * @date      8-January-2016
+  * @version   V1.6.0
+  * @date      15-April-2016
   * @brief     STM32L061xx Devices vector table for Atollic TrueSTUDIO toolchain.
   *            This module performs:
   *                - Set the initial SP

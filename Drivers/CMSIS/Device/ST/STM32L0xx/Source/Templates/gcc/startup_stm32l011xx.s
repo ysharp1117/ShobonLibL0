@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file      startup_stm32l011xx.s
   * @author    MCD Application Team
-  * @version   V1.5.0
-  * @date      8-January-2016
+  * @version   V1.6.0
+  * @date      15-April-2016
   * @brief     STM32L011xx Devices vector table for gcc.
   *            This module performs:
   *                - Set the initial SP
