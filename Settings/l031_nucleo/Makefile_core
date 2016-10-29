@@ -27,15 +27,15 @@ CMSIS_INCLUDE_DIRS =	-I $(CMSIS_DIR)/Include \
 ######################
 #個別ライブラリの設定#
 ######################
-include $(BOARD_SETTINGS_PATH)/Makefile_devicedriver
-include $(BOARD_SETTINGS_PATH)/Makefile_board
+include $(LIB_PATH)/Settings/common/Makefile_devicedriver
+include $(LIB_PATH)/Settings/common/Makefile_board
 
 ######################
 #共通ライブラリの作成#
 ######################
 include $(BOARD_SETTINGS_PATH)/Makefile_stm32l031k6_nucleo32
-include $(BOARD_SETTINGS_PATH)/Makefile_hallib
-include $(BOARD_SETTINGS_PATH)/Makefile_dsplib
+include $(LIB_PATH)/Settings/common/Makefile_hallib
+include $(LIB_PATH)/Settings/common/Makefile_dsplib
 
 ##############
 #デバッガ関係#
