@@ -69,7 +69,7 @@ static void setTransmitStatus(int state){
 	}
 }
 
-static void setTransmitData(uint32_t* addr,int size){
+static void setTransmitData(uint32_t* addr,uint16_t size){
 	while(USARTx_TX_DMA_Channel->CCR&DMA_CCR_EN);//Disableの確認
 	USARTx_TX_DMA_Channel->CMAR = (uint32_t)addr;
 	USARTx_TX_DMA_Channel->CNDTR = size;
