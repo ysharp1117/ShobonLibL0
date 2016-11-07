@@ -70,17 +70,17 @@ int _lseek_r (struct _reent *r, int file, int ptr, int dir){
 }
 
 /***************************************************************************/
-
-int _write_r (struct _reent *r, int file, char * ptr, int len){
+int _write_r (struct _reent *r, int file, char * ptr, size_t len){
 	r = r;
 	file = file;
 	ptr = ptr;
 	
 	int size=0;
+	int sum=0;
 	do{
-		size=send_str_DMA(ptr,len);
-	}while(size==-1);
-	len=size;
+		size=send_str_DMA(ptr+sum,len-sum);
+		if(size!=-1)sum+=size;
+	}while((size==-1 || len>sum) && size!=0);
 	
 	return len;
 }

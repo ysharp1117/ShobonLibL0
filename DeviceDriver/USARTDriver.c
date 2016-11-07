@@ -1,7 +1,7 @@
 /**
  * @file    USARTDriver.c
  * @author  \@y_sharp
- * @date    2016/01/01
+ * @date    2016/11/08
  * @brief   USARTを用いたマルチバッファ送信のドライバです。
  * syscalls.c 内で標準出力の出力先として利用されています。ユーザが利用する必要はありません。
  */ 
@@ -13,7 +13,7 @@
 #include "Board/USARTSettings.def"
 
 volatile static uint8_t trns_buf[TRNS_CNT][TRNS_BUF]={{0}};
-volatile static uint8_t trns_cnt[TRNS_CNT]={0};
+volatile static uint16_t trns_cnt[TRNS_CNT]={0};
 static uint16_t trns_data_cnt=0;
 static uint16_t trns_proc_now=0;
 
@@ -182,21 +182,22 @@ void USART_Init(){
 	//USARTx->CR3 |= USART_CR3_DMAR;
 }
 
-int send_str_DMA(char str[],uint16_t size){
+int send_str_DMA(char str[],size_t size){
 	int i;
 	
 	__disable_irq();
 	
 	//キューが満タンの場合はエラーを返す
-	if(trns_data_cnt>TRNS_CNT){
+	if(trns_data_cnt>=TRNS_CNT){
 		i=-1;
 	}else{
 		//バッファサイズを超える場合はバッファサイズまで格納
 		if(size>TRNS_BUF)size=TRNS_BUF;
+		//DMAの最大バッファサイズは65535(2^16-1)なので飽和演算の処理
+		if(size>65535)size=65535;
 		
 		for(i=0;i<size;i++){
 			trns_buf[trns_proc_now][i] = *str++;
-			if(trns_buf[trns_proc_now][i]=='\0')break;
 		}
 		
 		//送信バイト数を格納
