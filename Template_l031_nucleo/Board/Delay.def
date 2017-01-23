@@ -1,0 +1,13 @@
+/*
+2017/01/23 \@y_sharp
+for NUCLEO-L031K6
+*/
+#ifndef __SHOBON_DELAY_TIM_DEF__
+#define __SHOBON_DELAY_TIM_DEF__
+
+//単純待ちの際に利用するタイマを指定
+#define DELAY_TIM TIM2
+#define DELAY_TIM_CLK_ENABLE() __HAL_RCC_TIM2_CLK_ENABLE()
+#define DELAY_TIM_CLK_DISABLE() __HAL_RCC_TIM2_CLK_DISABLE()
+
+#endif
